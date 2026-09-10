@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>ARCHIWOOD — чертежи</title>
+<link rel="icon" href="logo.png">
+<style>
+  :root{--fon:#f7f5f1;--karta:#fff;--tekst:#1d1b17;--tusklo:#6f695f;--liniya:#e8e3da;
+        --akcent:#b8864e;--sinij:#35568a;--vopros:#8a5f1c;--zhdem:#a7a196}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--fon);color:var(--tekst);
+       font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+       -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit}
+
+  .shapka{padding:40px 18px 26px;text-align:center}
+  .shapka img{height:66px;display:block;margin:0 auto 20px}
+  .shapka .nadpis{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--tusklo)}
+  .shapka h1{margin:6px 0 0;font-size:30px;font-weight:600;letter-spacing:-.02em}
+
+  .obertka{max-width:980px;margin:0 auto;padding:0 18px 90px}
+
+  .plitki{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:6px 0 18px}
+  .plitka{background:var(--karta);border:1px solid var(--liniya);border-radius:16px;padding:15px 14px 13px;
+          cursor:pointer;text-align:left;transition:box-shadow .15s,border-color .15s}
+  .plitka b{display:block;font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.05}
+  .plitka span{display:block;font-size:13px;color:var(--tusklo);margin-top:5px;line-height:1.25}
+  .plitka:hover{box-shadow:0 4px 18px rgba(29,27,23,.06)}
+  .plitka.vybrana{border-color:var(--tekst);box-shadow:0 0 0 1px var(--tekst)}
+  .plitka.s b{color:var(--sinij)}
+  .plitka.k b{color:var(--akcent)}
+  .plitka.q b{color:var(--vopros)}
+  .plitka.n b{color:var(--zhdem)}
+  @media(max-width:720px){.plitki{grid-template-columns:repeat(2,1fr)}.plitka.all{grid-column:1/-1}}
+
+  .poisk{width:100%;padding:13px 15px;font-size:16px;border:1px solid var(--liniya);border-radius:14px;
+         background:var(--karta);margin-bottom:16px;outline:none}
+  .poisk:focus{border-color:var(--tusklo)}
+
+  .kartochka{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:18px;margin-bottom:14px}
+  .k-verh{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .kod{font-weight:700;font-size:18px;white-space:nowrap;letter-spacing:-.01em}
+  .nazv{flex:1;min-width:210px}
+  .nazv div{line-height:1.4}
+  .gde{color:var(--tusklo);font-size:14px;margin-top:3px}
+  .status{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;white-space:nowrap}
+  .status.s{background:#edf1f8;color:var(--sinij)}
+  .status.k{background:#f8efe2;color:#8a5a20}
+
+  .pachka{margin-top:16px;padding-top:16px;border-top:1px solid var(--liniya)}
+  .p-verh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px;font-size:14px;color:var(--tusklo)}
+  .versiya{font-size:11.5px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:7px}
+  .versiya.svezh{background:#e6f2ea;color:#2f7d4f}
+  .versiya.star{background:#f1eee8;color:var(--tusklo)}
+
+  .fajly{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .fajl{flex:0 0 auto;width:150px;border:1px solid var(--liniya);border-radius:13px;overflow:hidden;
+        background:#faf8f4;cursor:pointer;padding:0;text-align:left;transition:transform .12s}
+  .fajl:active{transform:scale(.98)}
+  .fajl .mini{width:100%;height:108px;object-fit:cover;display:block;background:#efebe3}
+  .fajl .zagl{height:108px;display:flex;align-items:center;justify-content:center;color:var(--tusklo);
+              font-size:13px;background:#efebe3}
+  .fajl .podp{font-size:12px;color:var(--tusklo);padding:7px 9px;line-height:1.3;
+              display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fajl .tip{font-weight:650;color:var(--akcent)}
+
+  .voprosy{margin-top:14px;background:#fbf6ed;border-radius:13px;padding:13px 16px}
+  .voprosy h3{margin:0 0 6px;font-size:14px;font-weight:650;color:var(--vopros)}
+  .voprosy .gr{font-size:13px;font-weight:650;color:var(--tusklo);margin:9px 0 2px}
+  .voprosy ol{margin:0;padding-left:21px;font-size:15px}
+  .voprosy li{margin:4px 0}
+
+  .net-poyasn{color:var(--tusklo);font-size:14.5px;margin:2px 0 12px}
+  .net-spisok{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:4px 18px}
+  .net-stroka{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--liniya);align-items:baseline;flex-wrap:wrap}
+  .net-stroka:last-child{border-bottom:0}
+  .net-stroka .kod{min-width:84px;font-size:16px}
+  .pusto{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:22px;color:var(--tusklo);text-align:center}
+
+  .podval{margin-top:30px;text-align:center;color:var(--tusklo);font-size:13px;line-height:1.7}
+
+  .smotr{position:fixed;inset:0;background:#15130f;z-index:50;display:none;flex-direction:column}
+  .smotr.vidno{display:flex}
+  .smotr-verh,.smotr-niz{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:11px 13px;
+                         color:#efe8dc;font-size:14px;background:#1e1b15}
+  .smotr-verh .imya{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .smotr button,.smotr a{background:rgba(255,255,255,.13);color:#fff;border:0;border-radius:10px;
+                         padding:9px 14px;font-size:15px;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .smotr .skachat{background:var(--akcent)}
+  .polotno{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:14px 0}
+  .polotno canvas,.polotno img{display:block;margin:0 auto 14px;background:#fff;max-width:none}
+  .zagr{color:#cfc7ba;padding:44px 14px}
+
+  .soobshchenie{max-width:420px;margin:30px auto;background:var(--karta);border:1px solid var(--liniya);
+                border-radius:18px;padding:24px;text-align:center;color:var(--tusklo)}
+  @media(max-width:600px){.shapka{padding:30px 14px 20px}.shapka img{height:54px}.shapka h1{font-size:25px}
+                          .obertka{padding:0 12px 70px}.kartochka{padding:15px}}
+</style>
+</head>
+<body>
+
+<div class="smotr" id="smotr">
+  <div class="smotr-verh">
+    <span class="imya" id="smImya"></span>
+    <span id="smSchet"></span>
+    <button id="smZakryt">Закрыть ✕</button>
+  </div>
+  <div class="polotno" id="polotno"></div>
+  <div class="smotr-niz">
+    <button id="smNazad">← Файл</button>
+    <button id="smVpered">Файл →</button>
+    <button id="smMinus">−</button>
+    <button id="smPlus">+</button>
+    <button id="smShir">По ширине</button>
+    <a class="skachat" id="smSkachat" href="#" download>Скачать</a>
+  </div>
+</div>
+
+<div class="shapka">
+  <img src="logo.png" alt="ARCHIWOOD">
+  <div class="nadpis">Чертежи на согласование</div>
+  <h1 id="nazvanie">&nbsp;</h1>
+</div>
+
+<div class="obertka">
+  <div id="soderzhanie" hidden>
+    <div class="plitki" id="plitki"></div>
+    <input class="poisk" id="poisk" placeholder="Найти изделие: код, название, помещение">
+    <div id="spisok"></div>
+    <div class="podval" id="podval"></div>
+  </div>
+  <div id="soobshchenie" class="soobshchenie" hidden></div>
+</div>
+
+<script>
+(function(){
+  var D = null, KLYUCH = null, FILTR = "all";
+  var PAPKA = "";
+  var FAJLY = new Map();
+  var SM = {spisok: [], nomer: 0, masshtab: 1, pdf: null, url: null};
+  var PLITKI = [["all","Все чертежи"],["s","На согласовании"],["k","Отправлены с корректировками"],
+                ["q","С открытыми вопросами"],["n","Без чертежей"]];
+
+  function $(id){ return document.getElementById(id); }
+  function ekran(t){ return String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function den(s){ if(!s) return ""; var d = s.slice(0,10).split("-"); return d[2]+"."+d[1]+"."+d[0]; }
+  function soobshchit(t){ var el = $("soobshchenie"); el.textContent = t; el.hidden = false; }
+
+  function izBase64url(s){
+    s = s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length % 4) s += "=";
+    return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); });
+  }
+  function otkryt(buf){
+    var u = new Uint8Array(buf);
+    return crypto.subtle.decrypt({name:"AES-GCM", iv:u.slice(0,12)}, KLYUCH, u.slice(12));
+  }
+  function fajl(imya){
+    if(FAJLY.has(imya)) return Promise.resolve(FAJLY.get(imya));
+    return fetch(PAPKA + "f/" + imya).then(function(r){
+      if(!r.ok) throw new Error("файл недоступен");
+      return r.arrayBuffer();
+    }).then(otkryt).then(function(b){ FAJLY.set(imya, b); return b; });
+  }
+
+  function nachat(){
+    var o = new URLSearchParams(location.search).get("o");
+    var h = location.hash.replace(/^#/, "");
+    if(!o || !/^[a-z0-9]{8,32}$/.test(o) || !h){ soobshchit("Ссылка неполная. Откройте её целиком — так, как её прислали."); return; }
+    PAPKA = o + "/";
+    crypto.subtle.importKey("raw", izBase64url(h), "AES-GCM", false, ["decrypt"]).then(function(k){
+      KLYUCH = k;
+      return fetch(PAPKA + "d.bin?" + Date.now());
+    }).then(function(r){
+      if(!r.ok) throw new Error();
+      return r.arrayBuffer();
+    }).then(otkryt).then(function(b){
+      D = JSON.parse(new TextDecoder().decode(b));
+      $("nazvanie").textContent = D.t;
+      document.title = "ARCHIWOOD — " + D.t;
+      $("soderzhanie").hidden = false;
+      $("poisk").addEventListener("input", risovat);
+      risovat();
+    }).catch(function(){ soobshchit("Страница не открылась. Проверьте, что ссылка скопирована целиком."); });
+  }
+
+  function podhodit(k){
+    if(FILTR === "all") return k.s !== "n";
+    if(FILTR === "q") return k.q;
+    return k.s === FILTR;
+  }
+
+  function risovat(){
+    $("plitki").innerHTML = PLITKI.map(function(p){
+      return '<button class="plitka ' + p[0] + (FILTR === p[0] ? ' vybrana' : '') + '" data-f="' + p[0] + '"><b>' +
+        (D.cnt[p[0]] || 0) + '</b><span>' + p[1] + '</span></button>';
+    }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll(".plitka"), function(b){
+      b.onclick = function(){ FILTR = b.dataset.f; risovat(); };
+    });
+    var q = ($("poisk").value || "").toLowerCase().trim();
+    var vidno = D.k.filter(function(k){
+      return podhodit(k) && (!q || (k.c + " " + k.n.join(" ") + " " + k.r).toLowerCase().indexOf(q) >= 0);
+    });
+    var spisok = $("spisok");
+    if(!vidno.length){ spisok.innerHTML = '<div class="pusto">Здесь пока ничего нет.</div>'; }
+    else if(FILTR === "n"){
+      spisok.innerHTML = '<p class="net-poyasn">По этим изделиям чертежи ещё не направлялись на согласование.</p>' +
+        '<div class="net-spisok">' + vidno.map(function(k){
+          return '<div class="net-stroka"><span class="kod">' + ekran(k.c) + '</span><span class="nazv">' +
+            ekran(k.n.join(" + ")) + '<div class="gde">' + ekran(k.r) + '</div></span></div>';
+        }).join("") + '</div>';
+    } else {
+      spisok.innerHTML = vidno.map(kartochka).join("");
+      Array.prototype.forEach.call(spisok.querySelectorAll(".fajl[data-k]"), function(b){
+        b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
+      });
+    }
+    $("podval").innerHTML = (D.upd ? "Последний чертёж направлен " + den(D.upd) + "<br>" : "") + "ARCHIWOOD · мебель индивидуального изготовления";
+    miniatyury();
+  }
+
+  function kartochka(k){
+    var ki = D.k.indexOf(k);
+    var status = k.s === "k" ? '<span class="status k">ваши корректировки — вносим</span>'
+                             : '<span class="status s">на согласовании с ' + den(k.p[0].z) + '</span>';
+    var v = '<div class="kartochka"><div class="k-verh">' + (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
+      '<span class="nazv">' + k.n.map(function(n){ return '<div>' + ekran(n) + '</div>'; }).join("") +
+      (k.r ? '<div class="gde">' + ekran(k.r) + '</div>' : '') + '</span>' + status + '</div>';
+    k.p.forEach(function(p, pi){
+      v += '<div class="pachka"><div class="p-verh">' +
+        (k.p.length > 1 ? (pi === 0 ? '<span class="versiya svezh">последняя версия</span>' : '<span class="versiya star">прежняя версия</span>') : '') +
+        '<span>' + den(p.z) + '</span></div><div class="fajly">' +
+        p.f.map(function(f, fi){
+          return '<button class="fajl" data-k="' + ki + '" data-p="' + pi + '" data-i="' + fi + '">' +
+            (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
+            '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
+        }).join("") + '</div>';
+      if(pi === 0 && p.q && p.q.length){
+        v += '<div class="voprosy"><h3>Открытые вопросы по чертежу</h3>' + p.q.map(function(g){
+          return (g.g ? '<div class="gr">' + ekran(g.g) + '</div>' : '') + '<ol>' +
+            g.i.map(function(t){ return '<li>' + ekran(t) + '</li>'; }).join("") + '</ol>';
+        }).join("") + '</div>';
+      }
+      v += '</div>';
+    });
+    return v + '</div>';
+  }
+
+  var nabl = null;
+  function miniatyury(){
+    if(nabl) nabl.disconnect();
+    nabl = new IntersectionObserver(function(z){
+      z.forEach(function(x){
+        if(!x.isIntersecting) return;
+        nabl.unobserve(x.target);
+        fajl(x.target.dataset.m).then(function(b){
+          x.target.src = URL.createObjectURL(new Blob([b], {type:"image/jpeg"}));
+        }).catch(function(){});
+      });
+    }, {rootMargin:"220px"});
+    Array.prototype.forEach.call(document.querySelectorAll("img[data-m]"), function(i){ nabl.observe(i); });
+  }
+
+  function pdfjs(){
+    if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function(ok, nok){
+      var s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      s.onload = function(){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        ok(window.pdfjsLib);
+      };
+      s.onerror = function(){ nok(new Error("просмотр недоступен")); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function smotret(ki, pi, fi){
+    SM.spisok = D.k[ki].p[pi].f;
+    SM.nomer = fi;
+    $("smotr").classList.add("vidno");
+    document.body.style.overflow = "hidden";
+    pokazat();
+  }
+
+  function pokazat(){
+    var f = SM.spisok[SM.nomer];
+    var polotno = $("polotno");
+    $("smImya").textContent = f.n;
+    $("smSchet").textContent = (SM.nomer + 1) + " из " + SM.spisok.length;
+    polotno.innerHTML = '<div class="zagr">Открываю…</div>';
+    SM.pdf = null; SM.masshtab = 1;
+    if(SM.url){ URL.revokeObjectURL(SM.url); SM.url = null; }
+    fajl(f.b).then(function(b){
+      SM.url = URL.createObjectURL(new Blob([b], {type: f.t === "p" ? "application/pdf" : "image/jpeg"}));
+      var sk = $("smSkachat"); sk.href = SM.url; sk.setAttribute("download", f.n);
+      if(f.t === "p"){
+        return pdfjs().then(function(lib){ return lib.getDocument({data: new Uint8Array(b.slice(0))}).promise; })
+          .then(function(pdf){ SM.pdf = pdf; return poShirine(); });
+      }
+      polotno.innerHTML = '<img id="smImg" src="' + SM.url + '" alt="">';
+      return poShirine();
+    }).catch(function(e){
+      polotno.innerHTML = '<div class="zagr">Не удалось показать файл. Его можно скачать кнопкой внизу.</div>';
+    });
+  }
+
+  function risovatPdf(){
+    var polotno = $("polotno"), dpr = window.devicePixelRatio || 1;
+    polotno.innerHTML = "";
+    var n = 0;
+    function sled(){
+      n++;
+      if(n > SM.pdf.numPages) return Promise.resolve();
+      return SM.pdf.getPage(n).then(function(str){
+        var vp = str.getViewport({scale: SM.masshtab});
+        var c = document.createElement("canvas");
+        c.width = Math.floor(vp.width * dpr); c.height = Math.floor(vp.height * dpr);
+        c.style.width = Math.floor(vp.width) + "px"; c.style.height = Math.floor(vp.height) + "px";
+        polotno.appendChild(c);
+        return str.render({canvasContext: c.getContext("2d"), viewport: str.getViewport({scale: SM.masshtab * dpr})}).promise;
+      }).then(sled);
+    }
+    return sled();
+  }
+
+  function poShirine(){
+    var shirina = Math.max(200, $("polotno").clientWidth - 18);
+    if(SM.pdf){
+      return SM.pdf.getPage(1).then(function(str){
+        SM.masshtab = shirina / str.getViewport({scale:1}).width;
+        return risovatPdf();
+      });
+    }
+    var img = $("smImg"); if(img) img.style.width = shirina + "px";
+    return Promise.resolve();
+  }
+
+  function masshtab(k){
+    if(SM.pdf){ SM.masshtab = Math.min(8, Math.max(0.2, SM.masshtab * k)); risovatPdf(); return; }
+    var img = $("smImg"); if(img) img.style.width = Math.max(120, img.clientWidth * k) + "px";
+  }
+
+  function listat(kuda){
+    var n = SM.nomer + kuda;
+    if(n < 0 || n >= SM.spisok.length) return;
+    SM.nomer = n; pokazat();
+  }
+
+  function zakryt(){
+    $("smotr").classList.remove("vidno");
+    document.body.style.overflow = "";
+    $("polotno").innerHTML = "";
+    if(SM.url){ URL.revokeObjectURL(SM.url); SM.url = null; }
+  }
+
+  $("smZakryt").onclick = zakryt;
+  $("smNazad").onclick = function(){ listat(-1); };
+  $("smVpered").onclick = function(){ listat(1); };
+  $("smMinus").onclick = function(){ masshtab(0.8); };
+  $("smPlus").onclick = function(){ masshtab(1.25); };
+  $("smShir").onclick = poShirine;
+  document.addEventListener("keydown", function(e){
+    if(!$("smotr").classList.contains("vidno")) return;
+    if(e.key === "Escape") zakryt();
+    if(e.key === "ArrowLeft") listat(-1);
+    if(e.key === "ArrowRight") listat(1);
+  });
+
+  nachat();
+})();
+</script>
+</body>
+</html>

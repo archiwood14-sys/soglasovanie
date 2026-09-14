@@ -74,6 +74,26 @@
   .voprosy ol{margin:0;padding-left:21px;font-size:15px}
   .voprosy li{margin:4px 0}
 
+  .otv-knopka{background:none;border:0;padding:4px 0;color:var(--akcent);font-size:14px;font-weight:600;cursor:pointer}
+  .otv-pole{margin:6px 0 10px;background:#fff;border:1px solid var(--liniya);border-radius:12px;padding:10px}
+  .otv-pole textarea{width:100%;min-height:74px;border:1px solid var(--liniya);border-radius:10px;padding:9px 11px;
+                     font:inherit;font-size:15px;resize:vertical;outline:none;background:#fff}
+  .otv-pole textarea:focus{border-color:var(--tusklo)}
+  .otv-niz{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .prikrepit{display:inline-block;border:1px solid var(--liniya);border-radius:10px;padding:7px 12px;font-size:14px;
+             cursor:pointer;background:#faf8f4;color:var(--tekst)}
+  .prikrepit input{display:none}
+  .vlozh{display:inline-flex;gap:6px;align-items:center;background:#f1eee8;border-radius:9px;padding:5px 9px;font-size:13px;max-width:100%}
+  .vlozh span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px}
+  .vlozh button{background:none;border:0;color:var(--tusklo);cursor:pointer;font-size:13px;padding:0 2px;text-decoration:underline}
+  .uzhe{margin:4px 0 8px;padding:8px 11px;border-left:3px solid #2f7d4f;background:#eef6f0;border-radius:0 10px 10px 0;font-size:14px}
+  .uzhe small{display:block;color:#2f7d4f;font-weight:600;font-size:12px;margin-bottom:2px}
+  .otv-blok{margin-top:14px;padding-top:12px;border-top:1px dashed #e5d9c3}
+  .otv-blok h4{margin:0 0 6px;font-size:14px;font-weight:650}
+  .otpravit{background:var(--akcent);color:#fff;border:0;border-radius:12px;padding:11px 18px;font-size:15px;font-weight:600;cursor:pointer}
+  .otpravit:disabled{opacity:.55;cursor:default}
+  .otv-sost{font-size:14px;color:var(--tusklo)}
+  .otv-sost.ok{color:#2f7d4f;font-weight:600}
   .net-poyasn{color:var(--tusklo);font-size:14.5px;margin:2px 0 12px}
   .net-spisok{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:4px 18px}
   .net-stroka{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--liniya);align-items:baseline;flex-wrap:wrap}
@@ -147,7 +167,8 @@
 <script>
 (function(){
   var D = null, KLYUCH = null, FILTR = "all";
-  var PAPKA = "";
+  var PAPKA = "", STRANICA = "";
+  var VLOZH = {};   // ключ поля → [File]
   var FAJLY = new Map();
   var SM = {spisok: [], nomer: 0, masshtab: 1, pdf: null, url: null};
   var PLITKI = [["all","Все чертежи"],["s","На согласовании"],["k","Отправлены с корректировками"],
@@ -179,8 +200,8 @@
     var o = new URLSearchParams(location.search).get("o");
     var h = location.hash.replace(/^#/, "");
     if(!o || !/^[a-z0-9]{8,32}$/.test(o) || !h){ soobshchit("Ссылка неполная. Откройте её целиком — так, как её прислали."); return; }
-    PAPKA = o + "/";
-    crypto.subtle.importKey("raw", izBase64url(h), "AES-GCM", false, ["decrypt"]).then(function(k){
+    PAPKA = o + "/"; STRANICA = o;
+    crypto.subtle.importKey("raw", izBase64url(h), "AES-GCM", false, ["decrypt", "encrypt"]).then(function(k){
       KLYUCH = k;
       return fetch(PAPKA + "d.bin?" + Date.now());
     }).then(function(r){
@@ -227,6 +248,7 @@
       Array.prototype.forEach.call(spisok.querySelectorAll(".fajl[data-k]"), function(b){
         b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
       });
+      privyazatOtvety(spisok);
     }
     Array.prototype.forEach.call(spisok.querySelectorAll(".viz[data-kv]"), function(b){
       b.onclick = function(){ smotretViz(+b.dataset.kv, +b.dataset.vi); };
@@ -268,15 +290,155 @@
             (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
             '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
         }).join("") + '</div>';
-      if(pi === 0 && p.q && p.q.length){
-        v += '<div class="voprosy"><h3>Открытые вопросы по чертежу</h3>' + p.q.map(function(g){
+      if(pi === 0){
+        v += '<div class="voprosy">' + (p.q && p.q.length ? '<h3>Открытые вопросы по чертежу</h3>' + p.q.map(function(g, gi){
           return (g.g ? '<div class="gr">' + ekran(g.g) + '</div>' : '') + '<ol>' +
-            g.i.map(function(t){ return '<li>' + ekran(t) + '</li>'; }).join("") + '</ol>';
-        }).join("") + '</div>';
+            g.i.map(function(t, ii){ return '<li>' + ekran(t) + otvetHtml(ki, p, gi, ii) + '</li>'; }).join("") + '</ol>';
+        }).join("") : '') +
+          '<div class="otv-blok"><h4>' + (p.q && p.q.length ? 'Общий комментарий к чертежу' : 'Комментарий к чертежу') + '</h4>' +
+          otvetHtml(ki, p, -1, -1) +
+          '<div class="otv-niz"><button class="otpravit" data-otpr="' + ki + '">Отправить ответы</button>' +
+          '<span class="otv-sost" id="sost-' + ki + '"></span></div></div></div>';
       }
       v += '</div>';
     });
     return v + '</div>';
+  }
+
+  // ---------- ответы на вопросы ----------
+  var SOST = {};
+  function kl(p, gi, ii){ return p.h + ":" + gi + ":" + ii; }
+  function chernovik(k, t){
+    try{
+      if(t === undefined) return localStorage.getItem("otv:" + k) || "";
+      if(t) localStorage.setItem("otv:" + k, t); else localStorage.removeItem("otv:" + k);
+    }catch(e){ return ""; }
+  }
+  function otpravlennye(){
+    try{ return JSON.parse(localStorage.getItem("otv-otpr:" + STRANICA) || "[]"); }catch(e){ return []; }
+  }
+  function prezhnie(p, gi, ii){
+    var s = (p.o || []).filter(function(o){ return o.gi === gi && o.ii === ii; });
+    otpravlennye().forEach(function(o){
+      if(o.h === p.h && o.gi === gi && o.ii === ii && !s.some(function(x){ return x.t === o.t; })) s.push(o);
+    });
+    return s;
+  }
+  function otvetHtml(ki, p, gi, ii){
+    var k = kl(p, gi, ii), bylo = prezhnie(p, gi, ii), ch = chernovik(k), fl = VLOZH[k] || [];
+    var v = bylo.map(function(o){
+      return '<div class="uzhe"><small>' + (gi < 0 ? "Ваш комментарий" : "Ваш ответ") + ' · ' + den(o.d) + '</small>' +
+        ekran(o.t).replace(/\n/g, "<br>") + (o.f && o.f.length ? '<div class="gde">Файлы: ' + ekran(o.f.join(", ")) + '</div>' : '') + '</div>';
+    }).join("");
+    var otkryto = gi < 0 || ch || fl.length;
+    if(!otkryto) v += '<button class="otv-knopka" data-otkryt="' + k + '">' + (bylo.length ? "Дополнить ответ" : "Ответить на этот вопрос") + '</button>';
+    v += '<div class="otv-pole" data-pole-blok="' + k + '"' + (otkryto ? '' : ' hidden') + '>' +
+      '<textarea data-pole="' + k + '" data-ki="' + ki + '" placeholder="' + (gi < 0 ? "Замечания, пожелания, ссылки — всё, что важно по этому чертежу" : "Ваш ответ на этот вопрос") + '">' + ekran(ch) + '</textarea>' +
+      '<div class="otv-niz"><label class="prikrepit">Прикрепить файлы<input type="file" multiple data-fajl="' + k + '"></label>' +
+      fl.map(function(f, i){ return '<span class="vlozh"><span>' + ekran(f.name) + '</span><button data-ubrat="' + k + '" data-i="' + i + '">убрать</button></span>'; }).join("") +
+      '</div></div>';
+    return v;
+  }
+  function privyazatOtvety(el){
+    Array.prototype.forEach.call(el.querySelectorAll("[data-otkryt]"), function(b){
+      b.onclick = function(){ var blok = el.querySelector('[data-pole-blok="' + b.dataset.otkryt + '"]'); blok.hidden = false; b.remove(); blok.querySelector("textarea").focus(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll("textarea[data-pole]"), function(t){
+      t.oninput = function(){ chernovik(t.dataset.pole, t.value); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll("input[data-fajl]"), function(inp){
+      inp.onchange = function(){
+        var k = inp.dataset.fajl;
+        VLOZH[k] = (VLOZH[k] || []).concat(Array.prototype.slice.call(inp.files));
+        risovat();
+      };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-ubrat]"), function(b){
+      b.onclick = function(){ VLOZH[b.dataset.ubrat].splice(+b.dataset.i, 1); risovat(); };
+    });
+    Array.prototype.forEach.call(el.querySelectorAll("[data-otpr]"), function(b){
+      var ki = +b.dataset.otpr, s = $("sost-" + ki);
+      if(SOST[ki]){ s.textContent = SOST[ki][0]; s.className = "otv-sost" + (SOST[ki][1] ? " ok" : ""); }
+      b.onclick = function(){ otpravitOtvety(ki, b); };
+    });
+  }
+
+  function vBase64(u){
+    var s = "", shag = 0x8000;
+    for(var i = 0; i < u.length; i += shag) s += String.fromCharCode.apply(null, u.subarray(i, i + shag));
+    return btoa(s);
+  }
+  async function zashifrovat(buf){
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var ct = new Uint8Array(await crypto.subtle.encrypt({name: "AES-GCM", iv: iv}, KLYUCH, buf));
+    var out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12);
+    return vBase64(out);
+  }
+  async function podgotovitFajl(f){
+    // снимки экрана и фото с телефона бывают огромными — уменьшаем до 2400 точек, как видит глаз
+    if(/^image\/(png|jpeg|webp|heic|heif)/.test(f.type) && window.createImageBitmap){
+      try{
+        var bm = await createImageBitmap(f), m = Math.min(1, 2400 / Math.max(bm.width, bm.height));
+        if(m < 1 || f.size > 3e6){
+          var c = document.createElement("canvas");
+          c.width = Math.round(bm.width * m); c.height = Math.round(bm.height * m);
+          c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
+          var b = await new Promise(function(ok){ c.toBlob(ok, "image/jpeg", 0.87); });
+          if(b) return {buf: await b.arrayBuffer(), n: f.name.replace(/\.[^.]+$/, "") + ".jpg", t: "image/jpeg"};
+        }
+      }catch(e){}
+    }
+    return {buf: await f.arrayBuffer(), n: f.name, t: f.type || ""};
+  }
+  async function vMostik(telo){
+    var r = await fetch(D.a.u, {method: "POST", body: JSON.stringify(telo)});
+    var d = await r.json();
+    if(!d.ok) throw new Error(d.error || "не принято");
+    return d.id;
+  }
+  async function otpravitOtvety(ki, knopka){
+    var k = D.k[ki], p = k.p[0], s = $("sost-" + ki);
+    var polya = [];
+    (p.q || []).forEach(function(g, gi){ g.i.forEach(function(t, ii){ polya.push({gi: gi, ii: ii, g: g.g || "", v: t}); }); });
+    polya.push({gi: -1, ii: -1, g: "", v: ""});
+    polya.forEach(function(x){ x.k = kl(p, x.gi, x.ii); x.t = chernovik(x.k).trim(); x.fl = VLOZH[x.k] || []; });
+    var est = polya.filter(function(x){ return x.t || x.fl.length; });
+    function sost(t, ok){ SOST[ki] = [t, ok]; s.textContent = t; s.className = "otv-sost" + (ok ? " ok" : ""); }
+    if(!est.length){ sost("Напишите ответ или прикрепите файл."); return; }
+    if(!D.a || !D.a.u){ sost("Отправка ответов пока недоступна."); return; }
+    knopka.disabled = true;
+    try{
+      var vseF = [], n = 0, vsego = est.reduce(function(a, x){ return a + x.fl.length; }, 0);
+      for(var i = 0; i < est.length; i++){
+        est[i].ids = [];
+        for(var j = 0; j < est[i].fl.length; j++){
+          n++; sost("Отправляю файл " + n + " из " + vsego + "…");
+          var f = await podgotovitFajl(est[i].fl[j]);
+          if(f.buf.byteLength > 20e6) throw new Error("файл «" + f.n + "» больше 20 МБ");
+          var id = await vMostik({type: "stroka", list: D.a.f, prefiksID: "ОФ", znacheniya: {"Страница": STRANICA},
+                                  audioBase64: await zashifrovat(f.buf), imyaAudio: "f", kolonkaAudio: "Файл"});
+          est[i].ids.push(id); vseF.push({id: id, n: f.n, t: f.t});
+        }
+      }
+      sost("Отправляю ответы…");
+      var komm = est.filter(function(x){ return x.gi < 0; })[0];
+      var zadanie = {v: 1, h: p.h, c: k.c, z: p.z, fi: vseF,
+        o: est.filter(function(x){ return x.gi >= 0; }).map(function(x){ return {gi: x.gi, ii: x.ii, g: x.g, v: x.v, t: x.t, f: x.ids}; }),
+        k: komm ? {t: komm.t, f: komm.ids} : null, w: Date.now()};
+      await vMostik({type: "stroka", list: D.a.o, prefiksID: "ОЗ",
+                     znacheniya: {"Страница": STRANICA, "Шифр": await zashifrovat(new TextEncoder().encode(JSON.stringify(zadanie)))}});
+      var spisok = otpravlennye(), segodnya = new Date().toISOString().slice(0, 10);
+      est.forEach(function(x){
+        spisok.push({h: p.h, gi: x.gi, ii: x.ii, t: x.t, d: segodnya, f: x.fl.map(function(f){ return f.name; })});
+        chernovik(x.k, ""); delete VLOZH[x.k];
+      });
+      try{ localStorage.setItem("otv-otpr:" + STRANICA, JSON.stringify(spisok.slice(-200))); }catch(e){}
+      SOST[ki] = ["Ответы отправлены. Спасибо!", true];
+      risovat();
+    }catch(e){
+      sost("Не отправилось: " + e.message + ". Попробуйте ещё раз — написанное сохранено.");
+    }
+    knopka.disabled = false;
   }
 
   var nabl = null;

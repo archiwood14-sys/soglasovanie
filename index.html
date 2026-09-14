@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<title>ARCHIWOOD — чертежи</title>
+<title>Архивуд — чертежи</title>
 <link rel="icon" href="logo.png">
 <style>
   :root{--fon:#f7f5f1;--karta:#fff;--tekst:#1d1b17;--tusklo:#6f695f;--liniya:#e8e3da;
@@ -91,7 +91,14 @@
   .smotr button,.smotr a{background:rgba(255,255,255,.13);color:#fff;border:0;border-radius:10px;
                          padding:9px 14px;font-size:15px;cursor:pointer;text-decoration:none;white-space:nowrap}
   .smotr .skachat{background:var(--akcent)}
-  .polotno{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:14px 0}
+  .sm-listy{display:flex;gap:5px;align-items:center;overflow-x:auto;padding:0 12px 8px;color:#cfc7ba;font-size:13px}
+  .sm-listy button{min-width:36px}
+  .sm-listy button.tek{background:#c18048}
+  .list-podp{color:#cfc7ba;font-size:12.5px;margin:4px auto 6px}
+  .viz-blok{margin-top:12px}
+  .viz-zag{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tusklo);margin-bottom:6px}
+  .net-stroka .viz-blok{flex-basis:100%}
+  .polotno{position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:14px 0}
   .polotno canvas,.polotno img{display:block;margin:0 auto 14px;background:#fff;max-width:none}
   .zagr{color:#cfc7ba;padding:44px 14px}
 
@@ -107,8 +114,9 @@
   <div class="smotr-verh">
     <span class="imya" id="smImya"></span>
     <span id="smSchet"></span>
-    <button id="smZakryt">Закрыть ✕</button>
+    <button id="smZakryt">Закрыть</button>
   </div>
+  <div class="sm-listy" id="smListy" hidden></div>
   <div class="polotno" id="polotno"></div>
   <div class="smotr-niz">
     <button id="smNazad">← Файл</button>
@@ -121,7 +129,7 @@
 </div>
 
 <div class="shapka">
-  <img src="logo.png" alt="ARCHIWOOD">
+  <img src="logo.png" alt="Архивуд">
   <div class="nadpis">Чертежи на согласование</div>
   <h1 id="nazvanie">&nbsp;</h1>
 </div>
@@ -181,7 +189,7 @@
     }).then(otkryt).then(function(b){
       D = JSON.parse(new TextDecoder().decode(b));
       $("nazvanie").textContent = D.t;
-      document.title = "ARCHIWOOD — " + D.t;
+      document.title = "Архивуд — " + D.t;
       $("soderzhanie").hidden = false;
       $("poisk").addEventListener("input", risovat);
       risovat();
@@ -212,7 +220,7 @@
       spisok.innerHTML = '<p class="net-poyasn">По этим изделиям чертежи ещё не направлялись на согласование.</p>' +
         '<div class="net-spisok">' + vidno.map(function(k){
           return '<div class="net-stroka"><span class="kod">' + ekran(k.c) + '</span><span class="nazv">' +
-            ekran(k.n.join(" + ")) + '<div class="gde">' + ekran(k.r) + '</div></span></div>';
+            ekran(k.n.join(" + ")) + '<div class="gde">' + ekran(k.r) + '</div></span>' + vizHtml(k) + '</div>';
         }).join("") + '</div>';
     } else {
       spisok.innerHTML = vidno.map(kartochka).join("");
@@ -220,17 +228,37 @@
         b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
       });
     }
-    $("podval").innerHTML = (D.upd ? "Последний чертёж направлен " + den(D.upd) + "<br>" : "") + "ARCHIWOOD · мебель индивидуального изготовления";
+    Array.prototype.forEach.call(spisok.querySelectorAll(".viz[data-kv]"), function(b){
+      b.onclick = function(){ smotretViz(+b.dataset.kv, +b.dataset.vi); };
+    });
+    $("podval").innerHTML = (D.upd ? "Последний чертёж направлен " + den(D.upd) + "<br>" : "") + "Архивуд · мебель индивидуального изготовления";
     miniatyury();
   }
 
+  function vizHtml(k){
+    var ki = D.k.indexOf(k);
+    if(!k.v || !k.v.length) return "";
+    return '<div class="viz-blok"><div class="viz-zag">Визуализации · ' + k.v.length + '</div><div class="fajly">' +
+      k.v.map(function(v, vi){
+        return '<button class="fajl viz" data-kv="' + ki + '" data-vi="' + vi + '">' +
+          (v.m ? '<img class="mini" data-m="' + ekran(v.m) + '" alt="">' : '<div class="zagl">вид</div>') +
+          '<div class="podp">' + ekran(v.p || "визуализация") + '</div></button>';
+      }).join("") + '</div></div>';
+  }
+  function smotretViz(ki, vi){
+    SM.spisok = D.k[ki].v.map(function(v){ return {n: (D.k[ki].c ? D.k[ki].c + " · " : "") + (v.p || "визуализация"), b: v.b, t: "i", m: v.m}; });
+    SM.nomer = vi;
+    $("smotr").classList.add("vidno");
+    document.body.style.overflow = "hidden";
+    pokazat();
+  }
   function kartochka(k){
     var ki = D.k.indexOf(k);
     var status = k.s === "k" ? '<span class="status k">ваши корректировки — вносим</span>'
                              : '<span class="status s">на согласовании с ' + den(k.p[0].z) + '</span>';
     var v = '<div class="kartochka"><div class="k-verh">' + (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
       '<span class="nazv">' + k.n.map(function(n){ return '<div>' + ekran(n) + '</div>'; }).join("") +
-      (k.r ? '<div class="gde">' + ekran(k.r) + '</div>' : '') + '</span>' + status + '</div>';
+      (k.r ? '<div class="gde">' + ekran(k.r) + '</div>' : '') + '</span>' + status + '</div>' + vizHtml(k);
     k.p.forEach(function(p, pi){
       v += '<div class="pachka"><div class="p-verh">' +
         (k.p.length > 1 ? (pi === 0 ? '<span class="versiya svezh">последняя версия</span>' : '<span class="versiya star">прежняя версия</span>') : '') +
@@ -295,6 +323,7 @@
     $("smSchet").textContent = (SM.nomer + 1) + " из " + SM.spisok.length;
     polotno.innerHTML = '<div class="zagr">Открываю…</div>';
     SM.pdf = null; SM.masshtab = 1;
+    $("smListy").hidden = true; $("smListy").innerHTML = "";
     if(SM.url){ URL.revokeObjectURL(SM.url); SM.url = null; }
     fajl(f.b).then(function(b){
       SM.url = URL.createObjectURL(new Blob([b], {type: f.t === "p" ? "application/pdf" : "image/jpeg"}));
@@ -313,12 +342,24 @@
   function risovatPdf(){
     var polotno = $("polotno"), dpr = window.devicePixelRatio || 1;
     polotno.innerHTML = "";
-    var n = 0;
+    var n = 0, vsego = SM.pdf.numPages, listy = $("smListy");
+    listy.hidden = vsego < 2;
+    listy.innerHTML = vsego < 2 ? "" : "<span>Листы:</span>" + Array.apply(null, {length: vsego}).map(function(_, i){
+      return '<button data-list="' + (i + 1) + '">' + (i + 1) + '</button>'; }).join("");
+    Array.prototype.forEach.call(listy.querySelectorAll("[data-list]"), function(b){
+      b.onclick = function(){ var el = polotno.querySelector('[data-list-n="' + b.dataset.list + '"]'); if(el) polotno.scrollTop = el.offsetTop - 6; };
+    });
+    polotno.onscroll = function(){
+      var tek = 1;
+      Array.prototype.forEach.call(polotno.querySelectorAll("[data-list-n]"), function(el){ if(el.offsetTop - 60 <= polotno.scrollTop) tek = +el.dataset.listN; });
+      Array.prototype.forEach.call(listy.querySelectorAll("[data-list]"), function(b){ b.classList.toggle("tek", +b.dataset.list === tek); });
+    };
     function sled(){
       n++;
       if(n > SM.pdf.numPages) return Promise.resolve();
       return SM.pdf.getPage(n).then(function(str){
         var vp = str.getViewport({scale: SM.masshtab});
+        if(vsego > 1){ var pd = document.createElement("div"); pd.className = "list-podp"; pd.dataset.listN = n; pd.textContent = "Лист " + n + " из " + vsego; polotno.appendChild(pd); }
         var c = document.createElement("canvas");
         c.width = Math.floor(vp.width * dpr); c.height = Math.floor(vp.height * dpr);
         c.style.width = Math.floor(vp.width) + "px"; c.style.height = Math.floor(vp.height) + "px";

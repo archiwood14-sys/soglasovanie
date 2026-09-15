@@ -74,26 +74,45 @@
   .voprosy ol{margin:0;padding-left:21px;font-size:15px}
   .voprosy li{margin:4px 0}
 
-  .otv-knopka{background:none;border:0;padding:4px 0;color:var(--akcent);font-size:14px;font-weight:600;cursor:pointer}
-  .otv-pole{margin:6px 0 10px;background:#fff;border:1px solid var(--liniya);border-radius:12px;padding:10px}
-  .otv-pole textarea{width:100%;min-height:74px;border:1px solid var(--liniya);border-radius:10px;padding:9px 11px;
+  .v-zag{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+  .v-zag h3{margin:0}
+  .schet{font-size:13px;color:var(--tusklo);font-variant-numeric:tabular-nums}
+  .v-spisok{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .vopros{background:#fff;border:1px solid #efe3cf;border-radius:13px;padding:12px 13px;display:flex;flex-direction:column;gap:10px}
+  .v-tekst{display:flex;gap:10px;font-size:15px}
+  .nomer{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:1px solid var(--liniya);display:grid;place-items:center;
+         font-size:12.5px;font-weight:650;color:var(--vopros);font-variant-numeric:tabular-nums}
+  .v-gr{font-size:12.5px;font-weight:650;color:var(--tusklo)}
+  .otvetit{align-self:flex-start;background:var(--akcent);color:#fff;border:0;border-radius:11px;padding:10px 16px;font-size:15px;font-weight:600;cursor:pointer}
+  .v-vse{margin:4px 0 0;color:#2f7d4f;font-weight:600;font-size:14.5px}
+  .otv-pole{display:flex;flex-direction:column;gap:8px}
+  .otv-pole textarea{width:100%;min-height:84px;border:1px solid var(--liniya);border-radius:10px;padding:9px 11px;
                      font:inherit;font-size:15px;resize:vertical;outline:none;background:#fff}
-  .otv-pole textarea:focus{border-color:var(--tusklo)}
-  .otv-niz{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-  .prikrepit{display:inline-block;border:1px solid var(--liniya);border-radius:10px;padding:7px 12px;font-size:14px;
-             cursor:pointer;background:#faf8f4;color:var(--tekst)}
+  .otv-pole textarea:focus{border-color:var(--akcent)}
+  .otv-niz{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .prikrepit{display:inline-block;border:1px dashed var(--liniya);border-radius:10px;padding:7px 12px;font-size:14px;cursor:pointer;color:var(--tusklo);background:#fff}
   .prikrepit input{display:none}
   .vlozh{display:inline-flex;gap:6px;align-items:center;background:#f1eee8;border-radius:9px;padding:5px 9px;font-size:13px;max-width:100%}
   .vlozh span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px}
-  .vlozh button{background:none;border:0;color:var(--tusklo);cursor:pointer;font-size:13px;padding:0 2px;text-decoration:underline}
-  .uzhe{margin:4px 0 8px;padding:8px 11px;border-left:3px solid #2f7d4f;background:#eef6f0;border-radius:0 10px 10px 0;font-size:14px}
-  .uzhe small{display:block;color:#2f7d4f;font-weight:600;font-size:12px;margin-bottom:2px}
-  .otv-blok{margin-top:14px;padding-top:12px;border-top:1px dashed #e5d9c3}
-  .otv-blok h4{margin:0 0 6px;font-size:14px;font-weight:650}
-  .otpravit{background:var(--akcent);color:#fff;border:0;border-radius:12px;padding:11px 18px;font-size:15px;font-weight:600;cursor:pointer}
+  .vlozh button,.otv-otmena,.ssylka{background:none;border:0;color:var(--tusklo);cursor:pointer;font-size:13.5px;padding:2px 0;text-decoration:underline;text-underline-offset:3px}
+  .otpravit{background:var(--akcent);color:#fff;border:0;border-radius:11px;padding:10px 16px;font-size:15px;font-weight:600;cursor:pointer}
   .otpravit:disabled{opacity:.55;cursor:default}
-  .otv-sost{font-size:14px;color:var(--tusklo)}
+  .istoriya{margin-top:12px;border-top:1px solid #efe3cf;padding-top:10px}
+  .istoriya summary{cursor:pointer;font-size:14.5px;font-weight:650;color:var(--tekst)}
+  .otvety{display:flex;flex-direction:column;gap:9px;margin-top:10px}
+  .otvet{background:#fff;border:1px solid var(--liniya);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+  .o-vopros{font-size:13px;color:var(--tusklo)}
+  .o-tekst{font-size:15px}
+  .o-fajly{font-size:13px;color:var(--tusklo)}
+  .o-sost{font-size:12.5px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--tusklo)}
+  .o-sost .ok{color:#2f7d4f;font-weight:600}
+  .o-sost .zamok{background:#efece6;color:#6f695f;padding:3px 8px;border-radius:999px;font-weight:600}
+  .komm-ssylka{display:block;margin-top:12px}
+  .komm-blok{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .otv-sost{font-size:14px;color:var(--tusklo);margin-top:6px}
+  .otv-sost:empty{display:none}
   .otv-sost.ok{color:#2f7d4f;font-weight:600}
+  .tost{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--tekst);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
   .net-poyasn{color:var(--tusklo);font-size:14.5px;margin:2px 0 12px}
   .net-spisok{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:4px 18px}
   .net-stroka{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--liniya);align-items:baseline;flex-wrap:wrap}
@@ -163,6 +182,7 @@
   </div>
   <div id="soobshchenie" class="soobshchenie" hidden></div>
 </div>
+<div class="tost" id="tost" hidden></div>
 
 <script>
 (function(){
@@ -290,78 +310,129 @@
             (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
             '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
         }).join("") + '</div>';
-      if(pi === 0){
-        v += '<div class="voprosy">' + (p.q && p.q.length ? '<h3>Открытые вопросы по чертежу</h3>' + p.q.map(function(g, gi){
-          return (g.g ? '<div class="gr">' + ekran(g.g) + '</div>' : '') + '<ol>' +
-            g.i.map(function(t, ii){ return '<li>' + ekran(t) + otvetHtml(ki, p, gi, ii) + '</li>'; }).join("") + '</ol>';
-        }).join("") : '') +
-          '<div class="otv-blok"><h4>' + (p.q && p.q.length ? 'Общий комментарий к чертежу' : 'Комментарий к чертежу') + '</h4>' +
-          otvetHtml(ki, p, -1, -1) +
-          '<div class="otv-niz"><button class="otpravit" data-otpr="' + ki + '">Отправить ответы</button>' +
-          '<span class="otv-sost" id="sost-' + ki + '"></span></div></div></div>';
-      }
+      if(pi === 0) v += voprosyBlok(ki, p);
       v += '</div>';
     });
     return v + '</div>';
   }
 
-  // ---------- ответы на вопросы ----------
-  var SOST = {};
+  // ---------- ответы на вопросы (вариант А, 15.09.2026) ----------
+  // Под каждым вопросом — своя кнопка «Ответить на этот вопрос». Ответил — вопрос уходит из списка
+  // и попадает в «Вопросы, на которые вы ответили». Исправить можно, пока ответ не принят в работу;
+  // принятый — только дополнить. Комментарий к чертежу — неприметной ссылкой внизу.
+  var SOST = {}, OTKR = {}, PRAV = {}, DOP = {}, KOMM = {}, IST = {};
   function kl(p, gi, ii){ return p.h + ":" + gi + ":" + ii; }
   function chernovik(k, t){
     try{
       if(t === undefined) return localStorage.getItem("otv:" + k) || "";
       if(t) localStorage.setItem("otv:" + k, t); else localStorage.removeItem("otv:" + k);
     }catch(e){ return ""; }
+    return "";
   }
-  function otpravlennye(){
-    try{ return JSON.parse(localStorage.getItem("otv-otpr:" + STRANICA) || "[]"); }catch(e){ return []; }
-  }
-  function prezhnie(p, gi, ii){
-    var s = (p.o || []).filter(function(o){ return o.gi === gi && o.ii === ii; });
-    otpravlennye().forEach(function(o){
-      if(o.h === p.h && o.gi === gi && o.ii === ii && !s.some(function(x){ return x.t === o.t; })) s.push(o);
+  function mestnye(){ try{ return JSON.parse(localStorage.getItem("otv-otpr:" + STRANICA) || "[]"); }catch(e){ return []; } }
+  // текущие ответы на вопрос: с сервера (без заменённых) + только что отправленные из этого браузера
+  function tekushchie(p, gi, ii){
+    var s = (p.o || []).filter(function(o){ return o.gi === gi && o.ii === ii && !o.zm; });
+    mestnye().forEach(function(o){
+      if(o.h !== p.h || o.gi !== gi || o.ii !== ii) return;
+      if((p.o || []).some(function(x){ return x.gi === gi && x.ii === ii && x.t === o.t; })) return;   // сервер уже знает
+      if(o.is) s = s.filter(function(x){ return x.pr; });                                          // исправление заменяет непринятый
+      s.push({t: o.t, d: o.d, f: o.f, pr: "", is: o.is, dop: o.dop, novyj: true});
     });
     return s;
   }
-  function otvetHtml(ki, p, gi, ii){
-    var k = kl(p, gi, ii), bylo = prezhnie(p, gi, ii), ch = chernovik(k), fl = VLOZH[k] || [];
-    var v = bylo.map(function(o){
-      return '<div class="uzhe"><small>' + (gi < 0 ? "Ваш комментарий" : "Ваш ответ") + ' · ' + den(o.d) + '</small>' +
-        ekran(o.t).replace(/\n/g, "<br>") + (o.f && o.f.length ? '<div class="gde">Файлы: ' + ekran(o.f.join(", ")) + '</div>' : '') + '</div>';
-    }).join("");
-    var otkryto = gi < 0 || ch || fl.length;
-    if(!otkryto) v += '<button class="otv-knopka" data-otkryt="' + k + '">' + (bylo.length ? "Дополнить ответ" : "Ответить на этот вопрос") + '</button>';
-    v += '<div class="otv-pole" data-pole-blok="' + k + '"' + (otkryto ? '' : ' hidden') + '>' +
-      '<textarea data-pole="' + k + '" data-ki="' + ki + '" placeholder="' + (gi < 0 ? "Замечания, пожелания, ссылки — всё, что важно по этому чертежу" : "Ваш ответ на этот вопрос") + '">' + ekran(ch) + '</textarea>' +
-      '<div class="otv-niz"><label class="prikrepit">Прикрепить файлы<input type="file" multiple data-fajl="' + k + '"></label>' +
-      fl.map(function(f, i){ return '<span class="vlozh"><span>' + ekran(f.name) + '</span><button data-ubrat="' + k + '" data-i="' + i + '">убрать</button></span>'; }).join("") +
-      '</div></div>';
-    return v;
+  function spisokVoprosov(p){
+    var vse = [];
+    (p.q || []).forEach(function(g, gi){ g.i.forEach(function(t, ii){ vse.push({gi: gi, ii: ii, g: g.g || "", v: t}); }); });
+    return vse;
+  }
+  function poleHtml(ki, k, rezhim, podskazka, knopka, znach){
+    var fl = VLOZH[rezhim + k] || [];
+    return '<div class="otv-pole">' +
+      '<textarea data-pole="' + rezhim + k + '" placeholder="' + podskazka + '">' + ekran(znach) + '</textarea>' +
+      '<div class="otv-niz"><label class="prikrepit">Прикрепить фото или файл<input type="file" multiple data-fajl="' + rezhim + k + '"></label>' +
+      fl.map(function(f, i){ return '<span class="vlozh"><span>' + ekran(f.name) + '</span><button data-ubrat="' + rezhim + k + '" data-i="' + i + '">убрать</button></span>'; }).join("") +
+      '</div><div class="otv-niz"><button class="otpravit" data-otpr="' + ki + '" data-k="' + k + '" data-rezhim="' + rezhim + '">' + knopka + '</button>' +
+      '<button class="otv-otmena" data-otmena="' + rezhim + k + '">Отмена</button></div></div>';
+  }
+  function voprosyBlok(ki, p){
+    var vse = spisokVoprosov(p), h = '';
+    var otkr = vse.filter(function(x){ return !tekushchie(p, x.gi, x.ii).length; });
+    if(vse.length){
+      h += '<div class="voprosy"><div class="v-zag"><h3>Вопросы по чертежу</h3><span class="schet">без ответа ' + otkr.length + ' из ' + vse.length + '</span></div>';
+      h += otkr.length ? '<ol class="v-spisok">' + otkr.map(function(x){
+        var k = kl(p, x.gi, x.ii), otkryto = OTKR[k] || chernovik("otv" + k) || (VLOZH["otv" + k] || []).length;
+        return '<li class="vopros"><div class="v-tekst"><span class="nomer">' + (x.ii + 1) + '</span><span>' +
+          (x.g ? '<span class="v-gr">' + ekran(x.g) + '</span> ' : '') + ekran(x.v) + '</span></div>' +
+          (otkryto ? poleHtml(ki, k, "otv", "Ваш ответ на этот вопрос", "Отправить ответ", chernovik("otv" + k))
+                   : '<button class="otvetit" data-otkryt="' + k + '">Ответить на этот вопрос</button>') + '</li>';
+      }).join("") + '</ol>' : '<p class="v-vse">На все вопросы по этому чертежу вы ответили. Спасибо!</p>';
+      h += '</div>';
+    }
+    // история: на что и как ответил
+    var otvechennye = vse.concat([{gi: -1, ii: -1, g: "", v: "Комментарий к чертежу"}]).filter(function(x){ return tekushchie(p, x.gi, x.ii).length; });
+    if(otvechennye.length){
+      h += '<details class="istoriya" data-ist="' + p.h + '"' + (IST[p.h] ? ' open' : '') + '><summary>Вопросы, на которые вы ответили · ' + otvechennye.length + '</summary><div class="otvety">' +
+        otvechennye.map(function(x){
+          var k = kl(p, x.gi, x.ii), s = tekushchie(p, x.gi, x.ii), posl = s[s.length - 1];
+          var zag = x.gi < 0 ? 'Комментарий к чертежу' : 'Вопрос ' + (x.ii + 1) + (x.g ? ' · ' + ekran(x.g) : '') + ' · ' + ekran(x.v);
+          var v = '<div class="otvet"><div class="o-vopros">' + zag + '</div>';
+          s.forEach(function(o){
+            var etot = o === posl && PRAV[k];
+            v += '<div class="o-tekst">' + (etot ? poleHtml(ki, k, "ispr", "Исправленный ответ", "Сохранить исправление", chernovik("ispr" + k) || o.t)
+                                                 : ekran(o.t).replace(/\n/g, "<br>") + (o.f && o.f.length ? '<div class="o-fajly">Файлы: ' + ekran(o.f.join(", ")) + '</div>' : '')) + '</div>' +
+              '<div class="o-sost">' + (o.dop ? '<span>дополнение · </span>' : '') +
+              (o.pr ? '<span class="zamok">принято в работу ' + den(o.pr) + ', изменить нельзя</span>'
+                    : '<span class="ok">' + (o.novyj ? 'отправлен' : 'получен') + ' ' + den(o.d) + (o.d && o.d.length > 10 ? ' в ' + o.d.slice(11, 16) : '') + (o.is ? ' · исправлено' : '') + '</span>' +
+                      (o === posl && !PRAV[k] ? '<button class="ssylka" data-pravit="' + k + '">Исправить</button>' : '')) + '</div>';
+          });
+          if(posl.pr){
+            v += DOP[k] ? poleHtml(ki, k, "dop", "Дополнение к ответу", "Отправить дополнение", chernovik("dop" + k))
+                        : '<button class="ssylka" data-dop="' + k + '">Дополнить ответ</button>';
+          }
+          return v + '</div>';
+        }).join("") + '</div></details>';
+    }
+    // комментарий к чертежу — не на виду
+    var kk = kl(p, -1, -1);
+    if(KOMM[p.h] || chernovik("otv" + kk)){
+      h += '<div class="komm-blok"><div class="o-vopros">Комментарий к чертежу — то, что не относится к вопросам выше</div>' +
+        poleHtml(ki, kk, "otv", "Ваш комментарий к чертежу", "Отправить комментарий", chernovik("otv" + kk)) + '</div>';
+    } else {
+      h += '<button class="ssylka komm-ssylka" data-komm="' + p.h + '">Оставить комментарий к чертежу</button>';
+    }
+    return h + '<div class="otv-sost" id="sost-' + ki + '"></div>';
   }
   function privyazatOtvety(el){
-    Array.prototype.forEach.call(el.querySelectorAll("[data-otkryt]"), function(b){
-      b.onclick = function(){ var blok = el.querySelector('[data-pole-blok="' + b.dataset.otkryt + '"]'); blok.hidden = false; b.remove(); blok.querySelector("textarea").focus(); };
-    });
-    Array.prototype.forEach.call(el.querySelectorAll("textarea[data-pole]"), function(t){
-      t.oninput = function(){ chernovik(t.dataset.pole, t.value); };
-    });
-    Array.prototype.forEach.call(el.querySelectorAll("input[data-fajl]"), function(inp){
-      inp.onchange = function(){
-        var k = inp.dataset.fajl;
-        VLOZH[k] = (VLOZH[k] || []).concat(Array.prototype.slice.call(inp.files));
-        risovat();
-      };
-    });
-    Array.prototype.forEach.call(el.querySelectorAll("[data-ubrat]"), function(b){
-      b.onclick = function(){ VLOZH[b.dataset.ubrat].splice(+b.dataset.i, 1); risovat(); };
-    });
-    Array.prototype.forEach.call(el.querySelectorAll("[data-otpr]"), function(b){
+    function kaz(sel, f){ Array.prototype.forEach.call(el.querySelectorAll(sel), f); }
+    kaz("[data-otkryt]", function(b){ b.onclick = function(){ OTKR[b.dataset.otkryt] = true; risovat(); fokus("otv" + b.dataset.otkryt); }; });
+    kaz("[data-komm]", function(b){ b.onclick = function(){ KOMM[b.dataset.komm] = true; risovat(); fokus("otv" + b.dataset.komm + ":-1:-1"); }; });
+    kaz("[data-pravit]", function(b){ b.onclick = function(){ PRAV[b.dataset.pravit] = true; IST[b.dataset.pravit.split(":")[0]] = true; risovat(); fokus("ispr" + b.dataset.pravit); }; });
+    kaz("[data-dop]", function(b){ b.onclick = function(){ DOP[b.dataset.dop] = true; risovat(); fokus("dop" + b.dataset.dop); }; });
+    kaz("[data-otmena]", function(b){ b.onclick = function(){
+      var k = b.dataset.otmena, rezhim = k.slice(0, 4) === "ispr" ? "ispr" : k.slice(0, 3), sut = k.slice(rezhim.length);
+      chernovik(k, ""); delete VLOZH[k];
+      if(rezhim === "otv"){ delete OTKR[sut]; if(/:-1:-1$/.test(sut)) delete KOMM[sut.split(":")[0]]; }
+      if(rezhim === "ispr") delete PRAV[sut];
+      if(rezhim === "dop") delete DOP[sut];
+      risovat();
+    }; });
+    kaz("details[data-ist]", function(d){ d.ontoggle = function(){ IST[d.dataset.ist] = d.open; }; });
+    kaz("textarea[data-pole]", function(t){ t.oninput = function(){ chernovik(t.dataset.pole, t.value); }; });
+    kaz("input[data-fajl]", function(inp){ inp.onchange = function(){
+      var k = inp.dataset.fajl; VLOZH[k] = (VLOZH[k] || []).concat(Array.prototype.slice.call(inp.files)); risovat(); }; });
+    kaz("[data-ubrat]", function(b){ b.onclick = function(){ VLOZH[b.dataset.ubrat].splice(+b.dataset.i, 1); risovat(); }; });
+    kaz("[data-otpr]", function(b){
       var ki = +b.dataset.otpr, s = $("sost-" + ki);
-      if(SOST[ki]){ s.textContent = SOST[ki][0]; s.className = "otv-sost" + (SOST[ki][1] ? " ok" : ""); }
-      b.onclick = function(){ otpravitOtvety(ki, b); };
+      if(SOST[ki] && s){ s.textContent = SOST[ki][0]; s.className = "otv-sost" + (SOST[ki][1] ? " ok" : ""); }
+      b.onclick = function(){ otpravitOtvet(ki, b.dataset.k, b.dataset.rezhim, b); };
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".otv-sost[id^='sost-']"), function(s){
+      var ki = +s.id.slice(5); if(SOST[ki]){ s.textContent = SOST[ki][0]; s.className = "otv-sost" + (SOST[ki][1] ? " ok" : ""); }
     });
   }
+  function fokus(pole){ var t = document.querySelector('textarea[data-pole="' + pole + '"]'); if(t) t.focus(); }
+  function tost(t){ var el = $("tost"); if(!el) return; el.textContent = t; el.hidden = false; clearTimeout(tost.t); tost.t = setTimeout(function(){ el.hidden = true; }, 3200); }
 
   function vBase64(u){
     var s = "", shag = 0x8000;
@@ -375,7 +446,7 @@
     return vBase64(out);
   }
   async function podgotovitFajl(f){
-    // снимки экрана и фото с телефона бывают огромными — уменьшаем до 2400 точек, как видит глаз
+    // снимки экрана и фото с телефона бывают огромными — уменьшаем до 2400 точек
     if(/^image\/(png|jpeg|webp|heic|heif)/.test(f.type) && window.createImageBitmap){
       try{
         var bm = await createImageBitmap(f), m = Math.min(1, 2400 / Math.max(bm.width, bm.height));
@@ -396,49 +467,46 @@
     if(!d.ok) throw new Error(d.error || "не принято");
     return d.id;
   }
-  async function otpravitOtvety(ki, knopka){
-    var k = D.k[ki], p = k.p[0], s = $("sost-" + ki);
-    var polya = [];
-    (p.q || []).forEach(function(g, gi){ g.i.forEach(function(t, ii){ polya.push({gi: gi, ii: ii, g: g.g || "", v: t}); }); });
-    polya.push({gi: -1, ii: -1, g: "", v: ""});
-    polya.forEach(function(x){ x.k = kl(p, x.gi, x.ii); x.t = chernovik(x.k).trim(); x.fl = VLOZH[x.k] || []; });
-    var est = polya.filter(function(x){ return x.t || x.fl.length; });
-    function sost(t, ok){ SOST[ki] = [t, ok]; s.textContent = t; s.className = "otv-sost" + (ok ? " ok" : ""); }
-    if(!est.length){ sost("Напишите ответ или прикрепите файл."); return; }
+  async function otpravitOtvet(ki, k, rezhim, knopka){
+    var karta = D.k[ki], p = karta.p[0], chasti = k.split(":"), gi = +chasti[1], ii = +chasti[2];
+    var pole = rezhim + k, t = (chernovik(pole) || "").trim(), fl = VLOZH[pole] || [];
+    var s = $("sost-" + ki);
+    function sost(tx, ok){ SOST[ki] = [tx, ok]; if(s){ s.textContent = tx; s.className = "otv-sost" + (ok ? " ok" : ""); } }
+    if(!t && !fl.length){ sost("Напишите ответ или прикрепите файл."); fokus(pole); return; }
     if(!D.a || !D.a.u){ sost("Отправка ответов пока недоступна."); return; }
     knopka.disabled = true;
     try{
-      var vseF = [], n = 0, vsego = est.reduce(function(a, x){ return a + x.fl.length; }, 0);
-      for(var i = 0; i < est.length; i++){
-        est[i].ids = [];
-        for(var j = 0; j < est[i].fl.length; j++){
-          n++; sost("Отправляю файл " + n + " из " + vsego + "…");
-          var f = await podgotovitFajl(est[i].fl[j]);
-          if(f.buf.byteLength > 20e6) throw new Error("файл «" + f.n + "» больше 20 МБ");
-          var id = await vMostik({type: "stroka", list: D.a.f, prefiksID: "ОФ", znacheniya: {"Страница": STRANICA},
-                                  audioBase64: await zashifrovat(f.buf), imyaAudio: "f", kolonkaAudio: "Файл"});
-          est[i].ids.push(id); vseF.push({id: id, n: f.n, t: f.t});
-        }
+      var vseF = [], ids = [];
+      for(var j = 0; j < fl.length; j++){
+        sost("Отправляю файл " + (j + 1) + " из " + fl.length + "…");
+        var f = await podgotovitFajl(fl[j]);
+        if(f.buf.byteLength > 20e6) throw new Error("файл «" + f.n + "» больше 20 МБ");
+        var id = await vMostik({type: "stroka", list: D.a.f, prefiksID: "ОФ", znacheniya: {"Страница": STRANICA},
+                                audioBase64: await zashifrovat(f.buf), imyaAudio: "f", kolonkaAudio: "Файл"});
+        ids.push(id); vseF.push({id: id, n: f.n, t: f.t});
       }
-      sost("Отправляю ответы…");
-      var komm = est.filter(function(x){ return x.gi < 0; })[0];
-      var zadanie = {v: 1, h: p.h, c: k.c, z: p.z, fi: vseF,
-        o: est.filter(function(x){ return x.gi >= 0; }).map(function(x){ return {gi: x.gi, ii: x.ii, g: x.g, v: x.v, t: x.t, f: x.ids}; }),
-        k: komm ? {t: komm.t, f: komm.ids} : null, w: Date.now()};
+      sost(rezhim === "ispr" ? "Сохраняю исправление…" : "Отправляю…");
+      var vopr = spisokVoprosov(p).filter(function(x){ return x.gi === gi && x.ii === ii; })[0] || {g: "", v: ""};
+      var zapis = {t: t, f: ids, is: rezhim === "ispr"};
+      var zadanie = {v: 2, h: p.h, c: karta.c, z: p.z, fi: vseF, w: Date.now(),
+        o: gi >= 0 ? [{gi: gi, ii: ii, g: vopr.g, v: vopr.v, t: t, f: ids, is: zapis.is}] : [],
+        k: gi < 0 ? zapis : null};
       await vMostik({type: "stroka", list: D.a.o, prefiksID: "ОЗ",
                      znacheniya: {"Страница": STRANICA, "Шифр": await zashifrovat(new TextEncoder().encode(JSON.stringify(zadanie)))}});
-      var spisok = otpravlennye(), segodnya = new Date().toISOString().slice(0, 10);
-      est.forEach(function(x){
-        spisok.push({h: p.h, gi: x.gi, ii: x.ii, t: x.t, d: segodnya, f: x.fl.map(function(f){ return f.name; })});
-        chernovik(x.k, ""); delete VLOZH[x.k];
-      });
-      try{ localStorage.setItem("otv-otpr:" + STRANICA, JSON.stringify(spisok.slice(-200))); }catch(e){}
-      SOST[ki] = ["Ответы отправлены. Спасибо!", true];
+      var spisok = mestnye(), d = new Date(), dd = function(n){ return String(n).padStart(2, "0"); };
+      spisok.push({h: p.h, gi: gi, ii: ii, t: t, is: zapis.is, dop: rezhim === "dop",
+                   d: d.getFullYear() + "-" + dd(d.getMonth() + 1) + "-" + dd(d.getDate()) + " " + dd(d.getHours()) + ":" + dd(d.getMinutes()),
+                   f: fl.map(function(x){ return x.name; })});
+      try{ localStorage.setItem("otv-otpr:" + STRANICA, JSON.stringify(spisok.slice(-300))); }catch(e){}
+      chernovik(pole, ""); delete VLOZH[pole]; delete OTKR[k]; delete PRAV[k]; delete DOP[k];
+      if(gi < 0) delete KOMM[p.h];
+      var soob = rezhim === "ispr" ? "Исправление сохранено." : gi < 0 ? "Комментарий отправлен. Спасибо!" : rezhim === "dop" ? "Дополнение отправлено." : "Ответ на вопрос " + (ii + 1) + " отправлен. Спасибо!";
+      SOST[ki] = [soob, true]; tost(soob);
       risovat();
     }catch(e){
       sost("Не отправилось: " + e.message + ". Попробуйте ещё раз — написанное сохранено.");
+      knopka.disabled = false;
     }
-    knopka.disabled = false;
   }
 
   var nabl = null;

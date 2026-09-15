@@ -143,6 +143,15 @@
 
   .soobshchenie{max-width:420px;margin:30px auto;background:var(--karta);border:1px solid var(--liniya);
                 border-radius:18px;padding:24px;text-align:center;color:var(--tusklo)}
+  /* На компьютере — вся ширина экрана: карточки встают колонками, сколько помещается;
+     на телефоне — одна колонка, как раньше */
+  .obertka{max-width:1920px;padding:0 clamp(18px,3vw,56px) 90px}
+  #spisok{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(560px,100%),1fr));gap:16px;align-items:start}
+  #spisok > .kartochka{margin-bottom:0;min-width:0}
+  #spisok > .net-poyasn, #spisok > .pusto, #spisok > .net-spisok{grid-column:1/-1}
+  .net-spisok{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(460px,100%),1fr));column-gap:40px}
+  .net-stroka{min-width:0}
+  .poisk{display:block;max-width:760px}
   @media(max-width:600px){.shapka{padding:30px 14px 20px}.shapka img{height:54px}.shapka h1{font-size:25px}
                           .obertka{padding:0 12px 70px}.kartochka{padding:15px}}
 </style>

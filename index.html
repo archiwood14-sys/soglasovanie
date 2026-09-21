@@ -190,21 +190,28 @@
 
   .okno-fon{position:fixed;inset:0;background:rgba(24,20,16,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}
   .okno-fon[hidden]{display:none}
-  .okno{background:var(--fon);width:min(860px,100%);max-height:92vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden}
+  .okno{background:var(--fon);width:100%;max-width:min(860px,100vw);max-height:92vh;max-height:92dvh;
+        border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;min-width:0;
+        padding-bottom:env(safe-area-inset-bottom)}
+  .okno > *{min-width:0;max-width:100%}
   @media(min-width:760px){.okno-fon{align-items:center}.okno{border-radius:20px;max-height:86vh}}
-  .okno-verh{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid var(--liniya);background:var(--karta)}
+  .okno-verh{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:16px 18px 12px;
+    border-bottom:1px solid var(--liniya);background:var(--karta);flex:0 0 auto;min-width:0}
+  .okno-zag{flex:1 1 auto}
   .okno-zag{display:flex;flex-direction:column;gap:4px;min-width:0}
   .okno-zag .kod{font-size:17px}
   .okno-nazv{font-size:16px}
   .okno-gde{font-size:13.5px;color:var(--tusklo);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
   .okno-zakryt{flex:0 0 auto;background:var(--liniya);border:0;border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer;color:var(--tekst)}
   .okno-zakryt:hover{background:#e3dbcd}
-  .okno-vkladki{display:flex;gap:8px;padding:12px 18px;background:var(--karta);border-bottom:1px solid var(--liniya);overflow-x:auto;overscroll-behavior-x:contain}
-  .vkladka{flex:0 0 auto;background:var(--fon);border:1px solid var(--liniya);border-radius:999px;padding:9px 15px;font-size:14px;cursor:pointer;color:var(--tekst)}
+  .okno-vkladki{display:flex;gap:8px;flex-wrap:wrap;padding:12px 18px;background:var(--karta);border-bottom:1px solid var(--liniya)}
+  .vkladka{flex:1 1 118px;min-width:0;background:var(--fon);border:1px solid var(--liniya);border-radius:999px;
+    padding:10px 12px;font-size:14px;cursor:pointer;color:var(--tekst);text-align:center;overflow-wrap:anywhere}
   .vkladka i{font-style:normal;color:var(--tusklo);font-size:12.5px}
   .vkladka.tek{background:var(--akcent);border-color:var(--akcent);color:#fff;font-weight:600}
   .vkladka.tek i{color:rgba(255,255,255,.8)}
-  .okno-telo{padding:16px 18px 24px;overflow:auto;overscroll-behavior:contain}
+  .okno-telo{padding:16px 18px 24px;overflow:auto;overscroll-behavior:contain;min-width:0}
+  .okno-telo .fajly{grid-template-columns:repeat(auto-fill,minmax(min(140px,100%),1fr))}
   .pusto-telo{color:var(--tusklo)}
   .v-poyasn{margin:0 0 10px;color:var(--tusklo);font-size:14.5px}
   .naverh{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:30;background:var(--tekst);color:var(--fon);
@@ -415,8 +422,8 @@
     var k = D.k[ki], p = k.p[0], pom = pomeshchenie(k.r), st = sostoyanie(k), sch = schet(k);
     $("oknoZag").innerHTML = (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
       '<span class="okno-nazv">' + ekran(k.n.join(" + ")) + '</span>' +
-      '<span class="okno-gde">' + (pom.n ? "Помещение " + ekran(pom.n) + " · " : "") + ekran(pom.imya) +
-      ' · <span class="status ' + st.kl + '">' + st.tekst + (st.data ? " с " + st.data : "") + '</span></span>';
+      '<span class="okno-gde">' + (pom.imya ? '<span>' + (pom.n ? "Помещение " + ekran(pom.n) + " · " : "") + ekran(pom.imya) + '</span>' : "") +
+      '<span class="status ' + st.kl + '">' + st.tekst + (st.data ? " с " + st.data : "") + '</span></span>';
     var vkladki = [];
     if(p) vkladki.push(["chertezh", "Чертёж", sch.ch]);
     if(sch.viz) vkladki.push(["viz", "Визуализации", sch.viz]);
@@ -677,7 +684,6 @@
           (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
           '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
       }).join("") + '</div>';
-    if(pi === 0) v += voprosyBlok(ki, p);
     return v + '</div>';
   }
 
@@ -841,6 +847,18 @@
     var el = $("spisok");
     $("naverh").hidden = !el || window.pageYOffset < 260;
   }, {passive: true});
+
+  // 21.09.2026: у заказчика в браузере оставалась старая страница из кеша. Теперь страница
+  // сама проверяет версию и перезагружается, когда мы выложили новую.
+  (function sledit(){
+    var svoya = null;
+    setInterval(function(){
+      fetch("v.json?" + Date.now(), {cache: "no-store"}).then(function(r){ return r.json(); }).then(function(d){
+        if(svoya === null){ svoya = d.v; return; }
+        if(d.v && d.v !== svoya && $("oknoFon").hidden && !$("smotr").classList.contains("vidno")) location.reload();
+      }).catch(function(){});
+    }, 60000);
+  })();
 
   nachat();
 })();

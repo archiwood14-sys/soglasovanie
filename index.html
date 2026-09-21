@@ -50,6 +50,7 @@
   .status{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:999px;white-space:nowrap}
   .status.s{background:#edf1f8;color:var(--sinij)}
   .status.k{background:#f8efe2;color:#8a5a20}
+  .status.net{background:#f1eee8;color:var(--tusklo)}
 
   .pachka{margin-top:16px;padding-top:16px;border-top:1px solid var(--liniya)}
   .p-verh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px;font-size:14px;color:var(--tusklo)}
@@ -59,9 +60,11 @@
 
   /* 21.09.2026 Мансур: «смахиваю в бок — и вся страница листается вместе с визуализациями;
      мы существуем только в одном контейнере». Прокрутка лент и просмотра не выходит за их края. */
-  .fajly{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;
-         overscroll-behavior-x:contain;scroll-snap-type:x proximity}
-  .fajly > *{scroll-snap-align:start}
+  /* 21.09.2026 Мансур: визуализации соседних изделий наезжали друг на друга и уезжали за край
+     карточки. Теперь — сетка с переносом внутри карточки: всё видно, ничего не прячется. */
+  .fajly{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;min-width:0}
+  .fajl{width:auto;min-width:0}
+  @media(max-width:560px){.fajly{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}}
   .fajl{flex:0 0 auto;width:150px;border:1px solid var(--liniya);border-radius:13px;overflow:hidden;
         background:#faf8f4;cursor:pointer;padding:0;text-align:left;transition:transform .12s}
   .fajl:active{transform:scale(.98)}
@@ -119,7 +122,10 @@
   .tost{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--tekst);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;max-width:calc(100% - 32px)}
   .net-poyasn{color:var(--tusklo);font-size:14.5px;margin:2px 0 12px}
   .net-spisok{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:4px 18px}
-  .net-stroka{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--liniya);align-items:baseline;flex-wrap:wrap}
+  .net-stroka{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--liniya);align-items:baseline;flex-wrap:wrap;min-width:0}
+  .net-stroka > *{min-width:0}
+  .kartochka{min-width:0;overflow:hidden}
+  .kartochka > *{min-width:0}
   .net-stroka:last-child{border-bottom:0}
   .net-stroka .kod{min-width:84px;font-size:16px}
   .pusto{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:22px;color:var(--tusklo);text-align:center}
@@ -138,7 +144,7 @@
   .sm-listy button{min-width:36px}
   .sm-listy button.tek{background:#c18048}
   .list-podp{color:#cfc7ba;font-size:12.5px;margin:4px auto 6px}
-  .viz-blok{margin-top:12px}
+  .viz-blok{margin-top:12px;min-width:0;max-width:100%}
   .viz-zag{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tusklo);margin-bottom:6px}
   .net-stroka .viz-blok{flex-basis:100%}
   .polotno{position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
@@ -205,8 +211,8 @@
   var VLOZH = {};   // ключ поля → [File]
   var FAJLY = new Map();
   var SM = {spisok: [], nomer: 0, masshtab: 1, pdf: null, url: null};
-  var PLITKI = [["all","Все чертежи"],["s","На согласовании"],["k","Отправлены с корректировками"],
-                ["q","С открытыми вопросами"],["n","Без чертежей"]];
+  var PLITKI = [["all","Все изделия"],["s","На согласовании"],["k","Ваши корректировки — вносим"],
+                ["q","С открытыми вопросами"],["n","Чертежей ещё нет"]];
 
   function $(id){ return document.getElementById(id); }
   function ekran(t){ return String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/</g,"&lt;")
@@ -252,15 +258,16 @@
   }
 
   function podhodit(k){
-    if(FILTR === "all") return k.s !== "n";
+    if(FILTR === "all") return true;          // все изделия объекта, с чертежами и без
     if(FILTR === "q") return k.q;
     return k.s === FILTR;
   }
 
   function risovat(){
     $("plitki").innerHTML = PLITKI.map(function(p){
+      var n = p[0] === "all" ? D.k.length : (D.cnt[p[0]] || 0);
       return '<button class="plitka ' + p[0] + (FILTR === p[0] ? ' vybrana' : '') + '" data-f="' + p[0] + '"><b>' +
-        (D.cnt[p[0]] || 0) + '</b><span>' + p[1] + '</span></button>';
+        n + '</b><span>' + p[1] + '</span></button>';
     }).join("");
     Array.prototype.forEach.call(document.querySelectorAll(".plitka"), function(b){
       b.onclick = function(){ FILTR = b.dataset.f; risovat(); };
@@ -271,14 +278,9 @@
     });
     var spisok = $("spisok");
     if(!vidno.length){ spisok.innerHTML = '<div class="pusto">Здесь пока ничего нет.</div>'; }
-    else if(FILTR === "n"){
-      spisok.innerHTML = '<p class="net-poyasn">По этим изделиям чертежи ещё не направлялись на согласование.</p>' +
-        '<div class="net-spisok">' + vidno.map(function(k){
-          return '<div class="net-stroka"><span class="kod">' + ekran(k.c) + '</span><span class="nazv">' +
-            ekran(k.n.join(" + ")) + '<div class="gde">' + ekran(k.r) + '</div></span>' + vizHtml(k) + '</div>';
-        }).join("") + '</div>';
-    } else {
-      spisok.innerHTML = vidno.map(kartochka).join("");
+    else {
+      spisok.innerHTML = (FILTR === "n" ? '<p class="net-poyasn">По этим изделиям чертежи ещё не направлялись на согласование.</p>' : "") +
+        vidno.map(kartochka).join("");
       Array.prototype.forEach.call(spisok.querySelectorAll(".fajl[data-k]"), function(b){
         b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
       });
@@ -311,7 +313,8 @@
   function kartochka(k){
     var ki = D.k.indexOf(k);
     var status = k.s === "k" ? '<span class="status k">ваши корректировки — вносим</span>'
-                             : '<span class="status s">на согласовании с ' + den(k.p[0].z) + '</span>';
+                : k.s === "n" ? '<span class="status net">чертёж ещё не направляли</span>'
+                              : '<span class="status s">на согласовании с ' + den(k.p[0].z) + '</span>';
     var v = '<div class="kartochka"><div class="k-verh">' + (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
       '<span class="nazv">' + k.n.map(function(n){ return '<div>' + ekran(n) + '</div>'; }).join("") +
       (k.r ? '<div class="gde">' + ekran(k.r) + '</div>' : '') + '</span>' + status + '</div>' + vizHtml(k);

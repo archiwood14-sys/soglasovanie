@@ -11,7 +11,7 @@
   :root{--fon:#f7f5f1;--karta:#fff;--tekst:#1d1b17;--tusklo:#6f695f;--liniya:#e8e3da;
         --akcent:#b8864e;--sinij:#35568a;--vopros:#8a5f1c;--zhdem:#a7a196}
   *{box-sizing:border-box}
-  html,body{margin:0}
+  html,body{margin:0;overflow-x:hidden;overscroll-behavior-x:none}
   body{background:var(--fon);color:var(--tekst);
        font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
        -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
@@ -57,7 +57,11 @@
   .versiya.svezh{background:#e6f2ea;color:#2f7d4f}
   .versiya.star{background:#f1eee8;color:var(--tusklo)}
 
-  .fajly{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  /* 21.09.2026 Мансур: «смахиваю в бок — и вся страница листается вместе с визуализациями;
+     мы существуем только в одном контейнере». Прокрутка лент и просмотра не выходит за их края. */
+  .fajly{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;
+         overscroll-behavior-x:contain;scroll-snap-type:x proximity}
+  .fajly > *{scroll-snap-align:start}
   .fajl{flex:0 0 auto;width:150px;border:1px solid var(--liniya);border-radius:13px;overflow:hidden;
         background:#faf8f4;cursor:pointer;padding:0;text-align:left;transition:transform .12s}
   .fajl:active{transform:scale(.98)}
@@ -130,14 +134,15 @@
   .smotr button,.smotr a{background:rgba(255,255,255,.13);color:#fff;border:0;border-radius:10px;
                          padding:9px 14px;font-size:15px;cursor:pointer;text-decoration:none;white-space:nowrap}
   .smotr .skachat{background:var(--akcent)}
-  .sm-listy{display:flex;gap:5px;align-items:center;overflow-x:auto;padding:0 12px 8px;color:#cfc7ba;font-size:13px}
+  .sm-listy{display:flex;gap:5px;align-items:center;overflow-x:auto;overscroll-behavior-x:contain;padding:0 12px 8px;color:#cfc7ba;font-size:13px}
   .sm-listy button{min-width:36px}
   .sm-listy button.tek{background:#c18048}
   .list-podp{color:#cfc7ba;font-size:12.5px;margin:4px auto 6px}
   .viz-blok{margin-top:12px}
   .viz-zag{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tusklo);margin-bottom:6px}
   .net-stroka .viz-blok{flex-basis:100%}
-  .polotno{position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:14px 0}
+  .polotno{position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+           touch-action:pan-x pan-y pinch-zoom;text-align:center;padding:14px 0}
   .polotno canvas,.polotno img{display:block;margin:0 auto 14px;background:#fff;max-width:none}
   .zagr{color:#cfc7ba;padding:44px 14px}
 
@@ -638,6 +643,22 @@
     $("polotno").innerHTML = "";
     if(SM.url){ URL.revokeObjectURL(SM.url); SM.url = null; }
   }
+
+  // смахивание в просмотре: листаем файлы этого изделия, пока картинка не увеличена
+  (function(){
+    var x0 = null, y0 = null, polotno = $("polotno");
+    polotno.addEventListener("touchstart", function(e){
+      if(e.touches.length !== 1){ x0 = null; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    }, {passive: true});
+    polotno.addEventListener("touchend", function(e){
+      if(x0 === null || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      var mozhno = polotno.scrollWidth <= polotno.clientWidth + 4;   // по ширине ничего не прокручивается
+      x0 = null;
+      if(mozhno && Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) listat(dx < 0 ? 1 : -1);
+    }, {passive: true});
+  })();
 
   $("smZakryt").onclick = zakryt;
   $("smNazad").onclick = function(){ listat(-1); };

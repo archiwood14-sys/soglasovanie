@@ -18,7 +18,7 @@
   button{font:inherit;color:inherit}
 
   .shapka{padding:40px 18px 26px;text-align:center}
-  .shapka img{height:66px;display:block;margin:0 auto 20px}
+  .shapka img{height:71px;display:block;margin:0 auto 20px}
   .shapka .nadpis{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--tusklo)}
   .shapka h1{margin:6px 0 0;font-size:30px;font-weight:600;letter-spacing:-.02em}
 
@@ -28,10 +28,11 @@
   .plitka{background:var(--karta);border:1px solid var(--liniya);border-radius:16px;padding:15px 14px 13px;
           cursor:pointer;text-align:left;transition:box-shadow .15s,border-color .15s;min-height:104px;
           display:flex;flex-direction:column;justify-content:space-between;min-width:0}
-  .plitka b{display:block;font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.05}
-  .plitka span{display:block;font-size:13px;color:var(--tusklo);margin-top:5px;line-height:1.3;overflow-wrap:anywhere}
+  .plitka b{display:block;font-size:30px;font-weight:650;letter-spacing:-.02em;line-height:1.05}
+  .plitka span{display:block;font-size:13px;color:var(--tusklo);margin-top:5px;line-height:1.3;overflow-wrap:anywhere;hyphens:auto}
+  @media(max-width:600px){.plitka span{font-size:12.5px}.plitka b{font-size:27px}}
   .plitka:hover{box-shadow:0 4px 18px rgba(29,27,23,.06)}
-  .plitka.vybrana{border-color:var(--tekst);box-shadow:0 0 0 1px var(--tekst)}
+  .plitka.vybrana{border-color:var(--akcent);box-shadow:0 0 0 1px var(--akcent);background:#fffaf3}
   .plitka.s b{color:var(--sinij)}
   .plitka.k b{color:var(--akcent)}
   .plitka.q b{color:var(--vopros)}
@@ -42,16 +43,17 @@
          background:var(--karta);margin-bottom:16px;outline:none}
   .poisk:focus{border-color:var(--tusklo)}
 
-  .karty{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:14px;align-items:stretch}
-  .karta{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:16px 18px;display:flex;
-         flex-direction:column;gap:10px;min-width:0}
-  .karta-verh{display:flex;gap:12px;align-items:baseline;min-width:0}
+  .karty{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:14px;align-items:stretch}
+  .karta{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;padding:18px;display:flex;
+         flex-direction:column;gap:11px;min-width:0;transition:border-color .15s,box-shadow .15s}
+  .karta:hover{border-color:#dcd0bb;box-shadow:0 6px 20px rgba(29,27,23,.05)}
+  .karta-verh{display:flex;gap:10px;align-items:baseline;min-width:0;min-height:44px}
   .karta-verh .nazv{flex:1;min-width:0;font-size:16.5px;line-height:1.35}
   .karta-pom{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:14px;color:var(--tusklo)}
   .karta-pom .pom-n{background:var(--liniya);color:var(--tekst);border-radius:999px;padding:2px 9px;font-size:12.5px;font-weight:600}
   .karta-sost{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .karta-sost .data{font-size:13px;color:var(--tusklo)}
-  .karta-pometki{font-size:13px;color:var(--tusklo)}
+  .karta-pometki{font-size:13px;color:var(--tusklo);margin-top:-2px}
   .karta .knopka{margin-top:auto}
   .knopka{display:block;width:100%;background:var(--akcent);color:#fff;border:0;border-radius:12px;padding:12px 16px;
           font-size:15px;font-weight:600;cursor:pointer;text-align:center;transition:filter .15s,transform .1s}
@@ -221,14 +223,12 @@
                 border-radius:18px;padding:24px;text-align:center;color:var(--tusklo)}
   /* На компьютере — вся ширина экрана: карточки встают колонками, сколько помещается;
      на телефоне — одна колонка, как раньше */
-  .obertka{max-width:1920px;padding:0 clamp(18px,3vw,56px) 90px}
-  #spisok{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(560px,100%),1fr));gap:16px;align-items:start}
-  #spisok > .kartochka{margin-bottom:0;min-width:0}
-  #spisok > .net-poyasn, #spisok > .pusto, #spisok > .net-spisok{grid-column:1/-1}
+  .obertka{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px) 90px}
+  #spisok{display:block}
   .net-spisok{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(460px,100%),1fr));column-gap:40px}
   .net-stroka{min-width:0}
-  .poisk{display:block;max-width:760px}
-  @media(max-width:600px){.shapka{padding:30px 14px 20px}.shapka img{height:54px}.shapka h1{font-size:25px}
+  .poisk{display:block}
+  @media(max-width:600px){.shapka{padding:30px 14px 20px}.shapka img{height:58px}.shapka h1{font-size:25px}
                           .obertka{padding:0 12px 70px}.kartochka{padding:15px}}
 </style>
 </head>

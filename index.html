@@ -76,7 +76,22 @@
   .fajl .tip{font-weight:650;color:var(--akcent)}
 
   .voprosy{margin-top:14px;background:#fbf6ed;border-radius:13px;padding:13px 16px}
-  .voprosy h3{margin:0 0 6px;font-size:14px;font-weight:650;color:var(--vopros)}
+  .voprosy > summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .voprosy > summary::-webkit-details-marker{display:none}
+  .voprosy > summary::after{content:"развернуть";font-size:12.5px;color:var(--tusklo);text-decoration:underline}
+  .voprosy[open] > summary::after{content:"свернуть"}
+  .voprosy h3{margin:0;font-size:14px;font-weight:650;color:var(--vopros);display:inline}
+  .spisok-izd{background:var(--karta);border:1px solid var(--liniya);border-radius:18px;overflow:hidden}
+  .si-stroka{border-bottom:1px solid var(--liniya)}
+  .si-stroka:last-child{border-bottom:0}
+  .si-stroka > summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;padding:13px 16px}
+  .si-stroka > summary::-webkit-details-marker{display:none}
+  .si-stroka > summary:hover{background:#faf6f0}
+  .si-stroka[open] > summary{background:#faf6f0}
+  .si-nazv{flex:1;min-width:190px}
+  .si-nazv i{display:block;font-style:normal;color:var(--tusklo);font-size:13.5px}
+  .si-znaki{color:var(--tusklo);font-size:13px;white-space:nowrap}
+  .si-telo{padding:0 16px 14px}
   .voprosy .gr{font-size:13px;font-weight:650;color:var(--tusklo);margin:9px 0 2px}
   .voprosy ol{margin:0;padding-left:21px;font-size:15px}
   .voprosy li{margin:4px 0}
@@ -206,13 +221,13 @@
 
 <script>
 (function(){
-  var D = null, KLYUCH = null, FILTR = "all";
+  var D = null, KLYUCH = null, FILTR = "s";   // открываемся на том, что сейчас на согласовании
   var PAPKA = "", STRANICA = "";
   var VLOZH = {};   // ключ поля → [File]
   var FAJLY = new Map();
   var SM = {spisok: [], nomer: 0, masshtab: 1, pdf: null, url: null};
-  var PLITKI = [["all","Все изделия"],["s","На согласовании"],["k","Ваши корректировки — вносим"],
-                ["q","С открытыми вопросами"],["n","Чертежей ещё нет"]];
+  var PLITKI = [["s","На согласовании"],["k","Ваши корректировки — вносим"],
+                ["q","С открытыми вопросами"],["all","Список изделий"]];
 
   function $(id){ return document.getElementById(id); }
   function ekran(t){ return String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/</g,"&lt;")
@@ -258,7 +273,7 @@
   }
 
   function podhodit(k){
-    if(FILTR === "all") return true;          // все изделия объекта, с чертежами и без
+    if(FILTR === "all") return true;          // список изделий объекта — все, с чертежами и без
     if(FILTR === "q") return k.q;
     return k.s === FILTR;
   }
@@ -266,6 +281,7 @@
   function risovat(){
     $("plitki").innerHTML = PLITKI.map(function(p){
       var n = p[0] === "all" ? D.k.length : (D.cnt[p[0]] || 0);
+      if(p[0] === "s" && !n && FILTR === "s") FILTR = "all";      // пока ничего не отправляли — открываем список
       return '<button class="plitka ' + p[0] + (FILTR === p[0] ? ' vybrana' : '') + '" data-f="' + p[0] + '"><b>' +
         n + '</b><span>' + p[1] + '</span></button>';
     }).join("");
@@ -277,19 +293,54 @@
       return podhodit(k) && (!q || (k.c + " " + k.n.join(" ") + " " + k.r).toLowerCase().indexOf(q) >= 0);
     });
     var spisok = $("spisok");
-    if(!vidno.length){ spisok.innerHTML = '<div class="pusto">Здесь пока ничего нет.</div>'; }
-    else {
-      spisok.innerHTML = (FILTR === "n" ? '<p class="net-poyasn">По этим изделиям чертежи ещё не направлялись на согласование.</p>' : "") +
-        vidno.map(kartochka).join("");
-      Array.prototype.forEach.call(spisok.querySelectorAll(".fajl[data-k]"), function(b){
-        b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
+    if(!vidno.length){ spisok.innerHTML = '<div class="pusto">' +
+      (FILTR === "s" ? "Сейчас у вас ничего нет на согласовании." : "Здесь пока ничего нет.") + '</div>'; }
+    else if(FILTR === "all"){
+      spisok.innerHTML = '<p class="net-poyasn">Все изделия объекта. Нажмите на изделие — откроются чертежи, вопросы и визуализации.</p>' +
+        '<div class="spisok-izd">' + vidno.map(stroka).join("") + '</div>';
+      Array.prototype.forEach.call(spisok.querySelectorAll(".si-stroka"), function(el){
+        el.addEventListener("toggle", function(){ if(el.open){ el.querySelector(".si-telo").innerHTML = podrobno(+el.dataset.ki); privyazat(el); } });
       });
-      privyazatOtvety(spisok);
+    }
+    else {
+      spisok.innerHTML = vidno.map(kartochka).join("");
+      privyazat(spisok);
     }
     Array.prototype.forEach.call(spisok.querySelectorAll(".viz[data-kv]"), function(b){
       b.onclick = function(){ smotretViz(+b.dataset.kv, +b.dataset.vi); };
     });
     $("podval").innerHTML = (D.upd ? "Последний чертёж направлен " + den(D.upd) + "<br>" : "") + "Архивуд · мебель индивидуального изготовления";
+    miniatyury();
+  }
+
+  // строка списка изделий: код, название, помещение, состояние; подробности выезжают
+  function stroka(k){
+    var ki = D.k.indexOf(k);
+    var sost = k.s === "k" ? '<span class="status k">ваши корректировки</span>'
+             : k.s === "n" ? '<span class="status net">чертежа ещё нет</span>'
+                           : '<span class="status s">на согласовании</span>';
+    var znaki = [];
+    if(k.p.length) znaki.push("чертежи");
+    if(k.q) znaki.push("вопросы");
+    if(k.v && k.v.length) znaki.push("визуализации · " + k.v.length);
+    return '<details class="si-stroka" data-ki="' + ki + '"><summary>' +
+      (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
+      '<span class="si-nazv">' + ekran(k.n.join(" + ")) + (k.r ? '<i>' + ekran(k.r) + '</i>' : '') + '</span>' +
+      sost + (znaki.length ? '<span class="si-znaki">' + ekran(znaki.join(" · ")) + '</span>' : '') +
+      '</summary><div class="si-telo"></div></details>';
+  }
+  function podrobno(ki){
+    var k = D.k[ki];
+    return vizHtml(k) + k.p.map(function(p, pi){ return pachkaHtml(k, ki, p, pi); }).join("");
+  }
+  function privyazat(gde){
+    Array.prototype.forEach.call(gde.querySelectorAll(".fajl[data-k]"), function(b){
+      b.onclick = function(){ smotret(+b.dataset.k, +b.dataset.p, +b.dataset.i); };
+    });
+    Array.prototype.forEach.call(gde.querySelectorAll(".viz[data-kv]"), function(b){
+      b.onclick = function(){ smotretViz(+b.dataset.kv, +b.dataset.vi); };
+    });
+    privyazatOtvety(gde);
     miniatyury();
   }
 
@@ -318,18 +369,7 @@
     var v = '<div class="kartochka"><div class="k-verh">' + (k.c ? '<span class="kod">' + ekran(k.c) + '</span>' : '') +
       '<span class="nazv">' + k.n.map(function(n){ return '<div>' + ekran(n) + '</div>'; }).join("") +
       (k.r ? '<div class="gde">' + ekran(k.r) + '</div>' : '') + '</span>' + status + '</div>' + vizHtml(k);
-    k.p.forEach(function(p, pi){
-      v += '<div class="pachka"><div class="p-verh">' +
-        (k.p.length > 1 ? (pi === 0 ? '<span class="versiya svezh">последняя версия</span>' : '<span class="versiya star">прежняя версия</span>') : '') +
-        '<span>' + den(p.z) + '</span></div><div class="fajly">' +
-        p.f.map(function(f, fi){
-          return '<button class="fajl" data-k="' + ki + '" data-p="' + pi + '" data-i="' + fi + '">' +
-            (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
-            '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
-        }).join("") + '</div>';
-      if(pi === 0) v += voprosyBlok(ki, p);
-      v += '</div>';
-    });
+    k.p.forEach(function(p, pi){ v += pachkaHtml(k, ki, p, pi); });
     return v + '</div>';
   }
 
@@ -376,7 +416,7 @@
     var vse = spisokVoprosov(p), h = '';
     var otkr = vse.filter(function(x){ return !tekushchie(p, x.gi, x.ii).length; });
     if(vse.length){
-      h += '<div class="voprosy"><div class="v-zag"><h3>Вопросы по чертежу</h3><span class="schet">без ответа ' + otkr.length + ' из ' + vse.length + '</span></div>';
+      h += '<details class="voprosy"><summary class="v-zag"><h3>Вопросы по чертежу</h3><span class="schet">без ответа ' + otkr.length + ' из ' + vse.length + '</span></summary>';
       h += otkr.length ? '<ol class="v-spisok">' + otkr.map(function(x){
         var k = kl(p, x.gi, x.ii), otkryto = OTKR[k] || chernovik("otv" + k) || (VLOZH["otv" + k] || []).length;
         return '<li class="vopros"><div class="v-tekst"><span class="nomer">' + (x.ii + 1) + '</span><span>' +
@@ -384,7 +424,7 @@
           (otkryto ? poleHtml(ki, k, "otv", "Ваш ответ на этот вопрос", "Отправить ответ", chernovik("otv" + k))
                    : '<button class="otvetit" data-otkryt="' + k + '">Ответить на этот вопрос</button>') + '</li>';
       }).join("") + '</ol>' : '<p class="v-vse">На все вопросы по этому чертежу вы ответили. Спасибо!</p>';
-      h += '</div>';
+      h += '</details>';
     }
     // история: на что и как ответил
     var otvechennye = vse.concat([{gi: -1, ii: -1, g: "", v: "Комментарий к чертежу"}]).filter(function(x){ return tekushchie(p, x.gi, x.ii).length; });
@@ -524,6 +564,19 @@
       sost("Не отправилось: " + e.message + ". Попробуйте ещё раз — написанное сохранено.");
       knopka.disabled = false;
     }
+  }
+
+  function pachkaHtml(k, ki, p, pi){
+    var v = '<div class="pachka"><div class="p-verh">' +
+      (k.p.length > 1 ? (pi === 0 ? '<span class="versiya svezh">последняя версия</span>' : '<span class="versiya star">прежняя версия</span>') : '') +
+      '<span>' + den(p.z) + '</span></div><div class="fajly">' +
+      p.f.map(function(f, fi){
+        return '<button class="fajl" data-k="' + ki + '" data-p="' + pi + '" data-i="' + fi + '">' +
+          (f.m ? '<img class="mini" data-m="' + ekran(f.m) + '" alt="">' : '<div class="zagl">' + (f.t === "p" ? "PDF" : "файл") + '</div>') +
+          '<div class="podp"><span class="tip">' + (f.t === "p" ? "Чертёж" : "Вид") + '</span> · ' + ekran(f.n) + '</div></button>';
+      }).join("") + '</div>';
+    if(pi === 0) v += voprosyBlok(ki, p);
+    return v + '</div>';
   }
 
   var nabl = null;
